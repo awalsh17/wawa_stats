@@ -39,10 +39,23 @@ wawa_osm %>% filter(!is.na(maxspeed)) %>%
   count(maxspeed, fuel, name = "wawa",.drop=F) %>%
   group_by(fuel) %>% mutate(fraction = wawa/sum(wawa)) %>% 
   ggplot(aes(x = maxspeed, y=fraction, fill=fuel)) + geom_col(position = "dodge") + 
-  theme_light() 
+  theme_minimal() 
 
-wawa_df %>% 
-  ggplot(aes(y = hw_count, x=fuel)) + geom_boxplot()
+wawa_df %>% filter(state %in% c("NJ","PA")) %>% 
+  ggplot(aes(y = house_count, x=fuel)) + geom_boxplot() + 
+  facet_wrap(~state) +
+  theme_minimal()
+
+wawa_osm %>% filter(state_ab %in% c("NJ","PA")) %>% 
+  ggplot(aes(y = maxspeed_num, x=fuel)) + 
+  geom_hline(yintercept = 25, color="red", linetype = 2) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(height = 0, width = 0.2, alpha=0.5) + 
+  facet_wrap(~state_ab) +
+  labs(title = "Speed Limits", 
+       subtitle = "Dotted red line shows proposed Wawa",
+       y="Max Speed Limit (mph)", x="Does the Wawa have gas?")+
+  theme_minimal()
 
 new_dist <- wawa_df$min_dist_wawa[wawa_df$storeName=="NEW"]
 
@@ -70,7 +83,7 @@ pheatmap::pheatmap(t(wawa_osm[,clust_vars]),
 
 # Inspect ----
 wawa_osm %>% filter(maxspeed == "25 mph") %>% View()
-wawa_osm %>% filter(maxspeed == "30 mph", fuel==T) %>% View()
+wawa_osm %>% filter(maxspeed %in% c("25 mph", "30 mph"), fuel==T) %>% View()
 
 
 
