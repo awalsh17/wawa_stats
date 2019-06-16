@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = F)
 ```
 
 ```{r libraries, include=FALSE}
@@ -33,6 +33,8 @@ There are also two other Wawa locations already in close proximity.
 wawa_df <- readRDS('data/wawa_df.Rds')
 osm_df <- readRDS('data/osm_df.Rds')
 
+# For better labels
+wawa_df$gas_label <- dplyr::if_else(wawa_df$fuel==TRUE, "Gas","No Gas")
 # Have col names lat state city in both
 wawa_osm <- cbind(rename(wawa_df, lat_wawa = lat, lon_wawa = long, state_ab = state), 
                   rename(osm_df, osm_city = city))
@@ -103,10 +105,10 @@ ggmap(map_new) +
 + Considered 'highway=motorways' as highways (https://wiki.openstreetmap.org/wiki/Key:highway)
 + Considered 'footway=sidewalk' as sidewalks
 
-*These results could be sensitive to the area selected. Here I used a 0.01 degree latitude and longitude rectangle centered around the location. This is approximately a 0.69 x 0.53 mile rectangle. See above map for the area around the proposed Wawa as an example.*
+*These results could be sensitive to the size of the area selected. Here I used a 0.01 degree latitude and longitude rectangle centered around the location. This is approximately a 0.69 x 0.53 mile rectangle. See above map for the area around the proposed Wawa as an example.*
 
 
-## Results: The new Wawa will be close to other Wawa locations
+## Results: The new Wawa will be unusually close to another Wawa location
 
 The distance to the nearest Wawa from each Wawa location was calculated in meters. The shortest distance between the Wawa coordinates was calculated according to the 'Vincenty (ellipsoid)' method as implemented in the 'geosphere' R package.
 
@@ -120,16 +122,17 @@ The median distance between locations is `r median(wawa_df$min_dist_wawa[-486])`
 
 ```{r}
 wawa_df %>% filter(state %in% c("NJ","PA")) %>% 
-  ggplot(aes(x=fuel, y=min_dist_wawa/1609.34)) + 
+  ggplot(aes(x=gas_label, y=min_dist_wawa/1609.34)) + 
   geom_hline(yintercept = new_dist/1609.34, color="red", linetype = 2) + 
   # geom_boxplot(outlier.shape = NA) + geom_jitter(height = 0, width = 0.2, alpha=0.5) + 
   ggbeeswarm::geom_quasirandom() + 
   facet_wrap(~state) +
   ylim(c(0,10)) +
   labs(title = "Distance to nearest Wawa", 
-       subtitle = "Dotted red line shows proposed Wawa, split by NJ and PA",
-       y="Distance (miles)", x="Does the Wawa have gas?")+
-  theme_minimal()
+       subtitle = "Dotted red line shows proposed Wawa,\nsplit by state",
+       y="Distance (miles)", x="")+
+  theme_minimal()+ 
+  theme(text = element_text(size=18))
 ```
 
 
@@ -137,23 +140,27 @@ wawa_df %>% filter(state %in% c("NJ","PA")) %>%
 
 This is imperfect because the OpenStreetMap data was missing for some roads and the roads might be a driveway or service road off a larger (higher speed) road.
 
+From this data, I do see that locations with gas are on higher speed limit roads.
+
 ```{r}
 wawa_osm %>% filter(state_ab %in% c("NJ","PA"), !is.na(maxspeed_num)) %>% 
-  ggplot(aes(y = maxspeed_num, x=fuel)) + 
+  ggplot(aes(y = maxspeed_num, x=gas_label)) + 
   geom_hline(yintercept = 25, color="red", linetype = 2) + 
   # geom_boxplot(outlier.shape = NA) + 
   # geom_jitter(height = 0, width = 0.2, alpha=0.5) + 
   ggbeeswarm::geom_quasirandom() + 
   facet_wrap(~state_ab) +
+  ylim(c(0,75)) + 
   labs(title = "Speed Limits", 
-       subtitle = "Dotted red line shows proposed Wawa, split by NJ and PA",
-       y="Max Speed Limit (mph)", x="Does the Wawa have gas?")+
-  theme_minimal()
+       subtitle = "Dotted red line shows proposed Wawa,\nsplit by state",
+       y="Max Speed Limit (mph)", x="")+
+  theme_minimal() + 
+  theme(text = element_text(size=18))
 ```
 
 ## Results: Most Wawa locations are in less residential/walkable areas
 
-Here, I use the number of sidewalks from OpenStreetMaps as a surrogate measure of the area's walkability. The proposed Wawa area has 25 marked sidewalks.
+Here, I use the number of sidewalks from OpenStreetMaps as a surrogate measure of the area's walkability. The proposed Wawa area has **25** sidewalks.
 
 
 + 28/485 [5.8%] current Wawa locations have as many or more sidewalks than the proposed site
@@ -162,7 +169,7 @@ Here, I use the number of sidewalks from OpenStreetMaps as a surrogate measure o
 
 
 ```{r}
-with(wawa_df[wawa_df$storeName!="NEW",], table(fuel,sidewalk_count>=25, exclude = NULL))
+with(wawa_df[wawa_df$storeName!="NEW",], table(gas_label,sidewalk_count>=25, exclude = NULL))
 ```
 
 ```{r}
