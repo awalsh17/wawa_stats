@@ -9,7 +9,7 @@ New Wawa in Glenside
 Motivation
 ----------
 
-Goodman Properties is planning a Wawa with gas (“Super Wawa”) at the corner of Easton Road and Waverly Road in Glenside, PA.
+Goodman Properties is planning a Wawa with gas (“Super Wawa”) at the corner of Easton Road and Waverly Road in Glenside, PA. Read about it on the Cheltenham Township [website](https://cheltenhamtownship.org/pview.aspx?id=40801).
 
 Concerns from neighbors and the community were raised about safety, traffic, and the juxtaposition with smaller scale properties and businesses in the area.
 
@@ -130,3 +130,19 @@ Here, I use the number of sidewalks from OpenStreetMaps as a surrogate measure o
     ## 15 Warrington       1
     ## 16 Willow Grove     1
     ## 17 WYNCOTE          1
+
+Comparable Wawa locations
+=========================
+
+So, these graphs and numbers are probably less interesting than just some comparisons to other Wawas. As a reminder, here is the new proposed Wawa [200 S Easton Rd.](https://www.google.com/maps/place/200+S+Easton+Rd,+Glenside,+PA+19038/@40.0986321,-75.1580774,17z/data=!3m1!4b1!4m5!3m4!1s0x89c6ba0ab50e862d:0xda87770daaf8ea23!8m2!3d40.098628!4d-75.1558834).
+
+Here are links to some other nearby Wawa with gas on google maps:
+
+-   [201 Old York Rd, Willow Grove, PA 19090](https://www.google.com/maps/place/Wawa/@40.1450747,-75.1157331,194m/data=!3m1!1e3!4m8!1m2!2m1!1swawa!3m4!1s0x0:0xd6bd9651899a5953!8m2!3d40.144994!4d-75.1152849)
+-   [816 Old York Road Jenkintown, PA 19046](https://www.google.com/maps/place/816+Old+York+Rd,+Jenkintown,+PA+19046/@40.1058766,-75.125348,193m/data=!3m1!1e3!4m5!3m4!1s0x89c6b0f1f372a1e5:0x582c1d92a5c6ad88!8m2!3d40.1058805!4d-75.1249387)
+
+Also owned by Goodman Properties:
+
+-   [8250 Limekiln Pike, Cheltenham PA](https://www.google.com/maps/place/8250+Limekiln+Pike,+Wyncote,+PA+19095/@40.0789565,-75.1629177,603m/data=!3m2!1e3!4b1!4m5!3m4!1s0x89c6b9f8ac1f68f5:0x12e0cd63081082c1!8m2!3d40.079163!4d-75.1605576)
+-   [2500 Philmont Ave. Huntingdon Valley, PA](https://www.google.com/maps/place/2500+Philmont+Ave,+Huntingdon+Valley,+PA+19006/@40.1206699,-75.0600542,603m/data=!3m1!1e3!4m5!3m4!1s0x89c6b2272c2ede9b:0x7da5ad695a44c7b9!8m2!3d40.1209592!4d-75.0587419)
+-   [1111 Grosser Road, Gilbertsville PA](https://www.google.com/maps/place/1111+Grosser+Rd,+Gilbertsville,+PA+19525/@40.3111508,-75.6357423,601m/data=!3m2!1e3!4b1!4m5!3m4!1s0x89c681455daee945:0x644ba219b598cb44!8m2!3d40.3108523!4d-75.6337198)
