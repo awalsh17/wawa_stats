@@ -63,6 +63,17 @@ motorway_count <- function(coords){
   houses <- nrow(res$osm_lines)
   houses
 }
+sidewalk_count <- function(coords){
+  mybb <- matrix(coords,nrow=2, byrow = T)
+  rownames(mybb) = c("y","x")
+  colnames(mybb) = c("min","max")
+  q <- opq(bbox = mybb, timeout = 100) %>%
+    add_osm_feature(key = 'footway', value = 'sidewalk') 
+  res <-  osmdata_sf(q)
+  # print(res)
+  res_num <- nrow(res$osm_lines)
+  res_num
+}
 
 # house_count(c(40.082143148568,40.122190646723,-75.194120407104,-75.136098861694))
 
@@ -91,6 +102,14 @@ all_hw_counts <- sapply(wawa_list, function(x) motorway_count(unlist(x)))
 # Merge back into main wawa df
 wawa_df$hw_count <- unlist(replace_na(all_hw_counts))
 wawa_df$hw_count[is.na(wawa_df$hw_count)] <- 0 #these are 0s
+
+
+# Count the sidewallks
+all_sidewalk_counts <- sapply(wawa_list, function(x) sidewalk_count(unlist(x)))
+# Merge back into main wawa df
+wawa_df$sidewalk_count <- unlist(replace_na(all_sidewalk_counts))
+wawa_df$sidewalk_count[is.na(wawa_df$sidewalk_count)] <- 0 #these are 0s
+
 
 # end
 

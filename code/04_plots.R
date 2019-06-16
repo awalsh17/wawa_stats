@@ -20,6 +20,7 @@ with(wawa_df, table(restrooms, exclude = NULL))
 with(wawa_df, table(state, exclude = NULL))
 
 with(wawa_df, table(fuel,hw_count>0, exclude = NULL))
+with(wawa_df, table(fuel,sidewalk_count>=25, exclude = NULL))
 
 # Tables road data ----
 table(wawa_osm$lanes, wawa_osm$fuel, exclude = NULL)
@@ -42,7 +43,9 @@ wawa_osm %>% filter(!is.na(maxspeed)) %>%
   theme_minimal() 
 
 wawa_df %>% filter(state %in% c("NJ","PA")) %>% 
-  ggplot(aes(y = house_count, x=fuel)) + geom_boxplot() + 
+  ggplot(aes(y = sidewalk_count, x=fuel)) + 
+  geom_hline(yintercept = 25, color="red", linetype = 2) + 
+  ggbeeswarm::geom_quasirandom() +
   facet_wrap(~state) +
   theme_minimal()
 
@@ -73,13 +76,13 @@ wawa_df %>% filter(state %in% c("NJ","PA")) %>%
 
 # Cluster data with interesting variables
 
-clust_vars <- c("lanes_num","maxspeed_num","house_count","hw_count")
+clust_vars <- c("lanes_num","maxspeed_num","house_count","hw_count","sidewalk_count")
 myannotation <- wawa_osm[,c("openType","fuel"), drop=F]
 myannotation$fuel <- as.character(myannotation$fuel)
 pheatmap::pheatmap(t(wawa_osm[,clust_vars]),
                    annotation_col = myannotation,
                    show_colnames = F,
-                   scale= "row")
+                   scale= "none")
 
 # Inspect ----
 wawa_osm %>% filter(maxspeed == "25 mph") %>% View()
