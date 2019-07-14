@@ -11,7 +11,9 @@ knitr::opts_chunk$set(echo = FALSE, dpi = 400)
 
 ```{r libraries, include=FALSE}
 library(ggplot2)
+library(cowplot)
 library(ggmap)
+library(ggimage)
 library(dplyr)
 ```
 
@@ -155,25 +157,60 @@ The distance to the nearest Wawa from each Wawa location was calculated in meter
 new_dist <- wawa_df$min_dist_wawa[wawa_df$storeName=="NEW"]
 ```
 
-The closest Wawa to the proposed location will be `r new_dist` meters from the nearest Wawa. That is `r new_dist/1609.34` miles.
+The closest Wawa to the proposed location will be `r new_dist` meters from the nearest Wawa. That is `r round(new_dist/1609.34,3)` miles.
 
-The median distance between locations is `r median(wawa_df$min_dist_wawa[-486])` meters.
+The median distance between locations is `r round(median(wawa_df$min_dist_wawa[-486]),3)` meters.
 
 ```{r}
-wawa_df %>% filter(state %in% c("NJ","PA")) %>% 
+sandwich_file = '~/Documents/wawa/hoagiepic.jpg'
+# Image Source: https://www.phillymag.com/foobooz/2017/04/03/wawa-hoagie-decline/
+img <- magick::image_read(sandwich_file)
+```
+
+```{r}
+dist_p <- wawa_df %>% filter(state %in% c("NJ","PA")) %>% 
   ggplot(aes(x=gas_label, y=min_dist_wawa/1609.34)) + 
   geom_hline(yintercept = new_dist/1609.34, color="red", linetype = 2) + 
   # geom_boxplot(outlier.shape = NA) + geom_jitter(height = 0, width = 0.2, alpha=0.5) + 
+  geom_text(y=0.55, x=1, label = "Proposed Wawa", size=3, color="red") + 
   ggbeeswarm::geom_quasirandom() + 
   facet_wrap(~state) +
   ylim(c(0,10)) +
   labs(title = "Distance to nearest Wawa", 
-       subtitle = "Dotted red line shows proposed Wawa,\nsplit by state",
+       # subtitle = "Dotted red line shows proposed Wawa,\nsplit by state",
        y="Distance (miles)", x="")+
   theme_minimal()+ 
   theme(text = element_text(size=18))
+
+ggdraw() + 
+  draw_image(img, scale = 0.75) +
+  draw_plot(dist_p)
 ```
 
+## Continued
+
+```{r}
+## ggimage
+median_min_dist <- wawa_df %>% filter(state %in% c("NJ","PA")) %>% 
+  group_by(state, gas_label) %>% 
+  summarise(min_dist_miles = median(min_dist_wawa/1609.34))
+
+median_min_dist$label <- c("Proposed Wawa", NA, NA, NA)
+
+logo_file = '../data/195309-200.png'
+# Image source: Sandwich by Chris Markhing from the Noun Project
+
+ggplot(median_min_dist, aes(x=gas_label, y=min_dist_miles)) + 
+  geom_image(image=logo_file, size = .2)+
+  geom_hline(yintercept = new_dist/1609.34, color="red", linetype = 2) + 
+  geom_text(y=0.75, aes(label = label), size=3) + 
+  facet_wrap(~state) +
+  ylim(c(0, 2)) +
+  labs(title = "Wawa in NJ and PA", 
+       y="Median distance (miles)", x="") + 
+  theme_minimal() + 
+  theme(text = element_text(size=18))
+```
 
 ## Results: Most Wawa locations with gas are on higher speed roads
 
@@ -182,19 +219,25 @@ This is imperfect because the OpenStreetMap data was missing for some roads and 
 From this data, I do see that locations with gas are on higher speed limit roads.
 
 ```{r}
-wawa_osm %>% filter(state_ab %in% c("NJ","PA"), !is.na(maxspeed_num)) %>% 
+speed_p <- wawa_osm %>% filter(state_ab %in% c("NJ","PA"),
+                               !is.na(maxspeed_num)) %>% 
   ggplot(aes(y = maxspeed_num, x=gas_label)) + 
   geom_hline(yintercept = 25, color="red", linetype = 2) + 
+  geom_text(y=20, x=1, label = "Proposed Wawa", size=3, color="red") + 
   # geom_boxplot(outlier.shape = NA) + 
   # geom_jitter(height = 0, width = 0.2, alpha=0.5) + 
   ggbeeswarm::geom_quasirandom() + 
   facet_wrap(~state_ab) +
   ylim(c(0,75)) + 
   labs(title = "Speed Limits", 
-       subtitle = "Dotted red line shows proposed Wawa,\nsplit by state",
+       # subtitle = "Dotted red line shows proposed Wawa,\nsplit by state",
        y="Max Speed Limit (mph)", x="")+
   theme_minimal() + 
   theme(text = element_text(size=18))
+
+ggdraw() + 
+  draw_image(img, scale = 0.75) +
+  draw_plot(speed_p)
 ```
 
 ## Results: Most Wawa locations are in less residential/walkable areas
